@@ -189,6 +189,7 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
     <a href="#overview" data-view="overview">Deployment health</a>
     <a href="#week" data-view="week">Weekly check-in</a>
     <a href="#update" data-view="update">Exec update</a>
+    <a href="#customer" data-view="customer">Customer view</a>
     <div class="grp">Account</div>
     <a href="#journey" data-view="journey">Journey</a>
     <a href="#hypercells" data-view="hypercells">Hypercells</a>
@@ -391,6 +392,17 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
       <div id='pbBody'></div>
     </section>
 
+    <section id='v-customer' data-v='customer' hidden>
+      <h2>Customer view</h2>
+      <p class='muted'>What Swissport sees. Standard updates appear automatically; the DSM chooses what else to share, edits the wording, and publishes when ready.</p>
+      <div class='panel row' style='justify-content:space-between'>
+        <div class='seg' role='radiogroup' aria-label='View mode' id='cvMode' style='margin:0;min-width:300px'><button type='button' role='radio' data-cv='curate' aria-checked='true'>Curate as DSM</button><button type='button' role='radio' data-cv='preview' aria-checked='false'>Preview as customer</button></div>
+        <div class='row'><span class='small' id='pubState'></span><button class='btn primary' id='pubBtn' type='button'>Publish update</button></div>
+      </div>
+      <div id='cvCurate'></div>
+      <div id='cvPreview' hidden></div>
+    </section>
+
     <section id="v-scribe" data-v="scribe" hidden>
       <h2>Call scribe agent</h2>
       <p class="muted">Turns a customer call into draft decisions, actions and an intelligence note, whether Phenom recorded it, the customer shared their own transcript, or nothing was recorded and the DSM debriefs it by voice or typing.</p>
@@ -455,7 +467,7 @@ const STAGES=["Planning","Build","UAT","Go-live","Live"];
 const WORD={G:"On track",A:"Watch",R:"Holding"};
 const RANK={G:0,A:1,R:2};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const KEY="dst-proto-swissport-v3";
+const KEY="dst-proto-swissport-v4";
 
 function seed(){return{
   hypercells:[
@@ -473,11 +485,13 @@ function seed(){return{
     {id:"D2",text:"Name the UAT sign-off owner for interview scheduling",owner:"Recruitment Ops Manager",due:iso(-3),blocks:"HC2",open:true,impact:"Scheduling go-live slips; recruiters stay on manual booking through peak",esc:"TA Director"},
     {id:"D3",text:"Choose integration route to the background check vendor",owner:"HRIT Lead",due:iso(-15),blocks:"HC3",open:true,impact:"Airside onboarding misses winter peak; offer to start stays at 31 days",esc:"TA Director, then CHRO"},
     {id:"D4",text:"Agree pilot stations for the hiring manager hub",owner:"TA Director",due:iso(6),blocks:"HC4",open:true},
-    {id:"D5",text:"Set retention period for interview recordings",owner:"Data Protection Officer",due:iso(10),blocks:"",open:true}
+    {id:"D5",text:"Set retention period for interview recordings",owner:"Data Protection Officer",due:iso(10),blocks:"",open:true},
+    {id:"D6",text:"Fix shift calendar sync using the roster field mapping",owner:"Phenom SA",due:iso(4),blocks:"HC2",open:true,impact:"Scheduling UAT can’t close until the defects are fixed"}
   ],
   signals:{missed:1,contact:9,hours:3.5,contacts:3},
   history:{movement:"GGA",decisions:"GAA",sponsor:"GGG",delivery:"GAA",effort:"AAG",adoption:"GGG"},
-  override:null,overrideLog:[],nextId:6,
+  override:null,overrideLog:[],nextId:7,
+  share:{items:{},custom:[],summary:null,published:null,log:[],nextC:1},
   notes:[{id:'N1',date:iso(-9),said:'“We need more testing” on the screening agent (Recruitment Ops Manager)',means:'No one owns the screening workflow end to end; recruiters asking for full accuracy before go-live',type:'Confidence',recommend:'Define success criteria and run a controlled two-station pilot',source:'Diagnosis'}],
   journey:{stage:2,checks:{'0-0':true,'0-1':true,'1-1':true,'1-2':true,'2-0':true,'2-1':true,'3-2':true}},
   moves:[{week:iso(-21),score:3,ev:'HC1 entered UAT; knockout questions approved'},{week:iso(-14),score:3,ev:'HC1 went live at two stations'},{week:iso(-7),score:2,ev:'HC2 UAT defects reopened; background check decision slipped'}],
@@ -636,7 +650,7 @@ function renderHypercells(){
 function renderDecisions(){
   const rows=[...S.decisions].sort((a,b)=>(b.open-a.open)||a.due.localeCompare(b.due));
   $("decBody").innerHTML=rows.map(d=>{const o=overdue(d),r=decRag(d).rag;
-    return`<tr class="${d.open?"":"closed"}"><td>${esc(d.text)}${d.impact?`<div class='small muted'>If delayed: ${esc(d.impact)}</div>`:''}${d.esc?`<div class='small muted'>Escalation path: ${esc(d.esc)}</div>`:''}${o&&!d.impact?`<div class='incomplete'>Overdue with no impact statement</div>`:''}${d.source?`<div class="small muted">Call scribe, from ${d.source==="scribe"?"Gong recording":esc(d.source)}</div>`:""}</td><td>${esc(d.owner)}</td>
+    return`<tr class="${d.open?"":"closed"}"><td>${esc(d.text)}${d.impact?`<div class='small muted'>If delayed: ${esc(d.impact)}</div>`:''}${d.esc?`<div class='small muted'>Escalation path: ${esc(d.esc)}</div>`:''}${o&&!d.impact?`<div class='incomplete'>Overdue with no impact statement</div>`:''}${d.open&&custOwned(d)?`<div class='small' style='color:var(--g)'>Visible to customer (standard)</div>`:(d.open&&S.share&&S.share.items['dec:'+d.id]&&S.share.items['dec:'+d.id].shared?`<div class='small' style='color:var(--g)'>Shared with customer by DSM</div>`:'')}${d.source?`<div class="small muted">Call scribe, from ${d.source==="scribe"?"Gong recording":esc(d.source)}</div>`:""}</td><td>${esc(d.owner)}</td>
     <td>${fmt(d.due)}${o?`<div class="small" style="color:var(--${r==="G"?"muted":r.toLowerCase()})">${o} days overdue</div>`:""}</td>
     <td>${d.blocks?esc(hcName(d.blocks)):"—"}</td>
     <td class="keep">${d.open?pill(r):"Closed"}</td>
@@ -670,10 +684,10 @@ function draftUpdate(){
 }
 function renderUpdate(force){if(force||!$("updateText").dataset.edited)$("updateText").value=draftUpdate()}
 
-function renderAll(){renderOverview();renderHypercells();renderDecisions();renderValue();renderUpdate();renderStakeholders();renderWeek();renderJourney();renderChange();renderDiagnose();renderNotes();renderEscalate();renderPlaybook()}
+function renderAll(){renderOverview();renderHypercells();renderDecisions();renderValue();renderUpdate();renderStakeholders();renderWeek();renderJourney();renderChange();renderDiagnose();renderNotes();renderEscalate();renderPlaybook();renderCustomer()}
 
 /* ---------- Routing ---------- */
-const VIEWS=["overview","week","update","journey","hypercells","decisions","stakeholders","change","value","scribe","diagnose","notes","escalate","playbook"];
+const VIEWS=["overview","week","update","customer","journey","hypercells","decisions","stakeholders","change","value","scribe","diagnose","notes","escalate","playbook"];
 function route(){
   const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"overview";
   document.querySelectorAll("[data-v]").forEach(s=>s.hidden=s.dataset.v!==v);
@@ -1219,6 +1233,109 @@ function renderCallLog(){
   $('callLog').innerHTML=C.length?C.slice(0,8).map(c=>`<div class='row' style='justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)'><span><strong>${esc(c.title)}</strong> <span class='small muted'>${fmt(c.date)}</span></span><span class='row' style='gap:8px'><span class='srcpill'>${esc(c.source)}</span><span class='small muted'>${note(c)}</span></span></div>`).join(''):`<p class='small muted' style='margin:0'>No calls processed yet. Every processed call is logged with how it was captured.</p>`;
 }
 $('callDate').value=iso(0);setMode('gong');renderCallLog();
+
+/* ---------- Customer view ---------- */
+let cvMode='curate';
+const CW={G:'On track',A:'Watch',R:'Needs attention'};
+const LOCKED=[['Intelligence notes and diagnoses','Internal reads of what was said'],['Stakeholder map and stakeholder RAG','Influence, stance and relationship assessments'],['Sponsor engagement and customer effort','Internal health dimensions'],['Override reasons and escalation memos','Internal decision-making'],['Resistance signals','Observed behavior by user group'],['Call transcripts and debriefs','Raw call material']];
+function shareState(){if(!S.share)S.share={items:{},custom:[],summary:null,published:null,log:[],nextC:1};return S.share}
+function itm(k){const sh=shareState();if(!sh.items[k])sh.items[k]={shared:false,text:null,at:null};return sh.items[k]}
+function custOwned(d){return !String(d.owner||'').startsWith('Phenom')}
+function custHealth(){return worst(dimensions().filter(d=>['movement','decisions','delivery','adoption'].includes(d.key)).map(d=>d.rag))}
+const lc=s=>s.charAt(0).toLowerCase()+s.slice(1);
+function riskDraft(k){
+  const H=S.hypercells;
+  if(k==='movement'){const st=H.filter(h=>hcMovement(h).rag!=='G');return st.length?st.map(h=>`${h.name} is taking longer than planned in ${h.stage}. Next step: ${lc(h.next)}.`).join(' '):'All hypercells are moving to plan.'}
+  if(k==='decisions'){const late=S.decisions.filter(d=>d.open&&overdue(d)>0&&d.blocks);return late.length?late.map(d=>{const h=H.find(x=>x.id===d.blocks);return `${d.text} is past its due date and is holding up ${h?h.name:'the plan'}.`}).join(' ')+' Closing these this week protects the timeline.':'No decisions are holding up the plan.'}
+  if(k==='delivery'){const b=H.filter(h=>hcDelivery(h).rag!=='G');return b.length?b.map(h=>`${h.name}: some UAT fixes needed rework. We are addressing the root cause with your team.`).join(' '):'Testing is on track.'}
+  const a=H.filter(h=>hcAdoption(h).rag!=='G');return a.length?a.map(h=>`${h.name}: usage is at ${h.adoption}% of target. We’ll run an adoption check with ${h.persona}.`).join(' '):'Adoption is on track.';
+}
+function changeDraft(){const t=S.hypercells.filter(h=>STAGES.indexOf(h.stage)<=3).map(h=>{const gs=GROUPS.filter((g,gi)=>(S.impact[h.id]||'')[gi]==='H');return gs.length?`${h.name}: preparing ${gs.join(', ')} ahead of ${STAGES.indexOf(h.stage)<=1?'UAT':'go-live'}.`:''}).filter(Boolean);return t.length?t.join(' '):'No change activities planned this week.'}
+function decDraft(d){return `${d.text}. Owner: ${d.owner}. Due ${fmt(d.due)}.${d.impact?' Why it matters: '+d.impact+'.':''}`}
+function sumDraft(){const ev=weekEvents(),nx=S.hypercells.find(h=>h.stage!=='Live'),n=S.decisions.filter(d=>d.open&&custOwned(d)).length;return `This week: ${ev.length?ev.join('; '):'no stage changes'}. Next: ${nx?lc(nx.next)+' for '+nx.name:'adoption checks on live hypercells'}. ${n} decision${n===1?'':'s'} needed from your team.`}
+function optItems(){
+  const out=[];
+  S.decisions.filter(d=>d.open&&!custOwned(d)).forEach(d=>out.push({k:'dec:'+d.id,kind:'Phenom commitment',draft:decDraft(d),current:true}));
+  const RK={movement:'Risk: schedule',decisions:'Risk: open decisions',delivery:'Risk: testing quality',adoption:'Risk: adoption'};
+  dimensions().filter(d=>RK[d.key]).forEach(d=>{const k='risk:'+d.key;if(d.rag!=='G'||itm(k).shared)out.push({k,kind:RK[d.key],draft:riskDraft(d.key),current:d.rag!=='G'})});
+  out.push({k:'change',kind:'Change and training plan',draft:changeDraft(),current:true});
+  return out;
+}
+function txt(k,draft){const t=itm(k).text;return t==null?draft:t}
+function snapshot(){
+  const sh=shareState(),H=S.hypercells;
+  return{health:custHealth(),summary:sh.summary==null?sumDraft():sh.summary,
+    hcs:H.map(h=>({name:h.name,stage:h.stage,next:h.next})),
+    decisions:S.decisions.filter(d=>d.open&&custOwned(d)).map(d=>txt('cdec:'+d.id,decDraft(d))),
+    shared:optItems().filter(o=>itm(o.k).shared).map(o=>({kind:o.kind,text:txt(o.k,o.draft)})).concat(sh.custom.filter(c=>c.shared).map(c=>({kind:c.title,text:c.text}))),
+    value:H.filter(h=>h.stage==='Live').map(h=>({name:h.name,outcome:h.value.outcome,baseline:h.value.baseline,target:h.value.target,current:h.value.current,adoption:h.adoption}))};
+}
+const when=at=>new Date(at).toLocaleString(undefined,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+function pubState(){
+  const sh=shareState(),el=$('pubState');
+  if(!sh.published){el.className='small incomplete';el.textContent='Not yet published to the customer';return}
+  if(sh.published.json!==JSON.stringify(snapshot())){el.className='small incomplete';el.textContent='Unpublished changes. The customer sees the version from '+when(sh.published.at)}
+  else{el.className='small ok';el.textContent='Customer is up to date, published '+when(sh.published.at)}
+}
+function renderCurate(){
+  const sh=S.share,H=S.hypercells,live=H.filter(h=>h.stage==='Live'),cd=S.decisions.filter(d=>d.open&&custOwned(d)),opts=optItems();
+  const stdRow=(t,d)=>`<div class='row' style='justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)'><span>${t}</span><span class='small ok'>${d}</span></div>`;
+  const left=`<div class='panel'><h3 style='margin-bottom:4px'>Always shown</h3><p class='small muted'>Standard updates. Wording is drafted for the customer, never copied from internal notes.</p>
+    <label for='cvSum'>Weekly summary for the customer</label><textarea id='cvSum' data-sum='1' style='min-height:90px'>${esc(sh.summary==null?sumDraft():sh.summary)}</textarea>
+    <div style='margin:12px 0'>${stdRow('Hypercell progress, next steps and UAT notice',H.length+' hypercells')}${stdRow('Value against baseline',live.length+' live')}${stdRow('Customer health, delivery dimensions only',CW[custHealth()])}</div>
+    <h3 style='margin:14px 0 6px;font-size:1.1rem'>Decisions needed from your team</h3>
+    ${cd.length?cd.map(d=>`<div style='margin-bottom:10px'><label for='cv-${d.id}'>${d.id}, customer wording</label><textarea id='cv-${d.id}' data-k='cdec:${d.id}' style='min-height:64px'>${esc(txt('cdec:'+d.id,decDraft(d)))}</textarea></div>`).join(''):`<p class='small muted'>None open.</p>`}</div>`;
+  const right=`<div class='panel'><h3 style='margin-bottom:4px'>Shared by the DSM</h3><p class='small muted'>Internal only until you turn it on. Edit the wording before you publish.</p>
+    ${opts.map(o=>{const it=itm(o.k),id='tg-'+o.k.replace(':','-'),stale=it.shared&&it.at&&daysSince(it.at)>14;
+      return `<div style='padding:10px 0;border-bottom:1px solid var(--line)'><div class='check' style='border:0;padding:0'><input type='checkbox' id='${id}' data-tg='${o.k}' ${it.shared?'checked':''}><label for='${id}' style='color:var(--ink);font-size:1rem;margin:0'><strong>${o.kind}</strong> ${it.shared?`<span class='small ok'>Visible to customer</span>`:`<span class='small muted'>Internal only</span>`}</label></div>
+      ${it.shared&&!o.current?`<div class='incomplete'>No longer current. Consider unsharing.</div>`:''}${stale?`<div class='incomplete'>Shared over 14 days ago. Reconfirm by publishing, or unshare.</div>`:''}
+      ${it.shared?`<textarea aria-label='Customer wording for ${o.kind}' data-k='${o.k}' style='min-height:64px;margin-top:6px'>${esc(txt(o.k,o.draft))}</textarea>`:`<div class='small muted' style='margin-top:4px'>Draft: ${esc(o.draft)}</div>`}</div>`}).join('')}
+    <h3 style='margin:14px 0 6px;font-size:1.1rem'>Custom updates</h3>
+    ${sh.custom.map(c=>`<div style='padding:8px 0;border-bottom:1px solid var(--line)'><div class='row' style='justify-content:space-between'><strong>${esc(c.title)}</strong><span class='row' style='gap:6px'><label class='small' style='margin:0;display:flex;gap:6px;align-items:center;color:var(--ink)'><input type='checkbox' data-ctg='${c.id}' ${c.shared?'checked':''}> Visible</label><button class='btn small' type='button' data-cdel='${c.id}'>Remove</button></span></div><div class='small'>${esc(c.text)}</div></div>`).join('')}
+    <div style='margin-top:10px'><label for='cTitle'>Title</label><input type='text' id='cTitle' placeholder='e.g. Recap of this week’s steering call'></div>
+    <div style='margin-top:8px'><label for='cText'>Update in customer-ready words</label><textarea id='cText' style='min-height:70px'></textarea></div>
+    <div class='row' style='margin-top:8px'><button class='btn' type='button' id='cAdd'>Add and share</button></div><div class='err' id='cErr'></div></div>`;
+  const locked=`<div class='panel'><h3 style='margin-bottom:4px'>Never shared</h3><p class='small muted'>These have no share control, so they can’t reach the customer by accident.</p>${LOCKED.map(([n,d])=>`<div class='row' style='justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)'><span><strong>${n}</strong> <span class='small muted'>${d}</span></span><span class='small muted'>Locked</span></div>`).join('')}</div>`;
+  const log=`<div class='panel'><h3 style='margin-bottom:6px'>Publish log</h3>${sh.log.length?sh.log.slice(0,8).map(l=>`<div class='small' style='padding:3px 0'>${when(l.at)}: published by the DSM, ${l.n} shared item${l.n===1?'':'s'}</div>`).join(''):`<p class='small muted' style='margin:0'>Nothing published yet.</p>`}</div>`;
+  $('cvCurate').innerHTML=`<div class='grid2'>${left}${right}</div><div class='grid2'>${locked}${log}</div>`;
+}
+function renderPreview(){
+  const s=snapshot();
+  $('cvPreview').innerHTML=`<div class='guard'>Preview: this is what Swissport will see after you publish. Nothing internal is included.</div>
+  <div class='panel' style='border-top:6px solid var(--accent)'><div class='row' style='justify-content:space-between;align-items:flex-start'><div><div class='muted small'>Deployment update, week of ${fmt(iso(0))}</div><h2 style='margin-top:4px'>Swissport and Phenom</h2></div><span class='pill ${s.health}'>${CW[s.health]}</span></div>
+    <p style='margin-top:12px'>${esc(s.summary)}</p><p class='small muted' style='margin:0'>Your Deployment Strategy Manager is your one point of contact: [DSM name].</p></div>
+  <h3 style='margin:18px 0 10px'>Where we are</h3>
+  <div class='hcgrid'>${s.hcs.map(h=>{const i=STAGES.indexOf(h.stage);return `<div class='panel' style='margin:0'><h3>${esc(h.name)}</h3><div class='stages'>${STAGES.map((x,j)=>`<div class='stage ${j<i?'done':j===i?'now':''}'>${x}</div>`).join('')}</div><div class='small'>Next: ${esc(h.next)}</div>${i<=1?`<div class='small muted'>We’ll confirm the UAT window at least two weeks ahead.</div>`:''}</div>`}).join('')}</div>
+  <h3 style='margin:18px 0 10px'>Decisions needed from your team</h3>
+  <div class='panel'>${s.decisions.length?`<ul style='margin:0;padding-left:18px'>${s.decisions.map(t=>`<li style='margin-bottom:6px'>${esc(t)}</li>`).join('')}</ul>`:`<p class='muted' style='margin:0'>None this week.</p>`}</div>
+  ${s.shared.length?`<h3 style='margin:18px 0 10px'>From your Phenom team</h3><div class='panel'>${s.shared.map(x=>`<p><strong>${esc(x.kind)}:</strong> ${esc(x.text)}</p>`).join('')}</div>`:''}
+  <h3 style='margin:18px 0 10px'>Value so far</h3>
+  <div class='panel tablewrap'>${s.value.length?`<table class='data'><thead><tr><th>Hypercell</th><th>Outcome</th><th>Baseline</th><th>Now</th><th>Target</th><th>Adoption</th></tr></thead><tbody>${s.value.map(v=>`<tr><td>${esc(v.name)}</td><td>${esc(v.outcome)}</td><td>${esc(v.baseline)}</td><td>${esc(v.current)}</td><td>${esc(v.target)}</td><td>${v.adoption==null?'—':v.adoption+'% of target'}</td></tr>`).join('')}</tbody></table>`:`<p class='muted' style='margin:0'>Value appears here once the first hypercell is live.</p>`}</div>`;
+}
+function renderCustomer(){
+  shareState();
+  document.querySelectorAll('#cvMode [data-cv]').forEach(b=>b.setAttribute('aria-checked',String(b.dataset.cv===cvMode)));
+  $('cvCurate').hidden=cvMode!=='curate';$('cvPreview').hidden=cvMode!=='preview';
+  if(cvMode==='curate')renderCurate();else renderPreview();
+  pubState();
+}
+$('cvMode').addEventListener('click',e=>{const b=e.target.closest('[data-cv]');if(!b)return;cvMode=b.dataset.cv;renderCustomer()});
+$('cvCurate').addEventListener('change',e=>{
+  const t=e.target.closest('[data-tg]');
+  if(t){const it=itm(t.dataset.tg);it.shared=t.checked;it.at=t.checked?iso(0):null;save();renderCustomer();toast(t.checked?'Visible to the customer after you publish':'Removed from the customer view after you publish');return}
+  const c=e.target.closest('[data-ctg]');if(c){const x=S.share.custom.find(y=>y.id===c.dataset.ctg);x.shared=c.checked;save();renderCustomer()}
+});
+$('cvCurate').addEventListener('input',e=>{
+  const k=e.target.closest('[data-k]');if(k){itm(k.dataset.k).text=k.value;save();pubState();return}
+  if(e.target.closest('[data-sum]')){S.share.summary=e.target.value;save();pubState();return}
+  if(e.target.id==='cTitle'||e.target.id==='cText')$('cErr').textContent='';
+});
+$('cvCurate').addEventListener('click',e=>{
+  const d=e.target.closest('[data-cdel]');if(d){S.share.custom=S.share.custom.filter(c=>c.id!==d.dataset.cdel);save();renderCustomer();return}
+  if(e.target.id==='cAdd'){const t=$('cTitle').value.trim(),x=$('cText').value.trim();if(!t||x.length<10){$('cErr').textContent='Add a title and the update in customer-ready words.';return}
+    S.share.custom.unshift({id:'U'+S.share.nextC++,title:t,text:x,shared:true});save();renderCustomer();toast('Added. It will be visible after you publish.')}
+});
+$('pubBtn').addEventListener('click',()=>{const sh=shareState(),snap=snapshot();sh.published={json:JSON.stringify(snap),at:new Date().toISOString()};sh.log.unshift({at:sh.published.at,n:snap.shared.length});Object.values(sh.items).forEach(it=>{if(it.shared)it.at=iso(0)});save();renderCustomer();toast('Published. Swissport now sees this update.')});
 
 renderAll();route();
 </script>
