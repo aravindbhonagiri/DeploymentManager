@@ -161,6 +161,11 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
 .note{border-left:4px solid var(--accent);padding:4px 0 4px 14px}
 .ok{color:var(--g);font-weight:600}
 .pbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin:8px 0 22px}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:8px}
+.seg button{flex:1;border:0;background:var(--surface);padding:8px 6px;font-weight:500;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-checked="true"]{background:var(--ink);color:var(--surface)}
+.srcpill{display:inline-block;font-size:.8rem;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
 [hidden]{display:none!important}
 .toast{position:sticky;bottom:12px;margin-top:12px;background:var(--ink);color:var(--surface);padding:10px 14px;border-radius:6px;width:max-content;max-width:100%}
 @media (prefers-reduced-motion:no-preference){.verdict .word{transition:color .3s}}
@@ -388,17 +393,36 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
 
     <section id="v-scribe" data-v="scribe" hidden>
       <h2>Call scribe agent</h2>
-      <p class="muted">Reads a Gong transcript and drafts decisions, actions and an intelligence note. The DSM accepts or discards each draft.</p>
+      <p class="muted">Turns a customer call into draft decisions, actions and an intelligence note, whether Phenom recorded it, the customer shared their own transcript, or nothing was recorded and the DSM debriefs it by voice or typing.</p>
       <div class="guard">Guardrails: drafts only, nothing enters the record until the DSM accepts it. Notes describe facts and behavior, never emotions or personal characterizations. Stakeholders are referred to by role.</div>
       <div class="grid2">
         <div>
-          <label for="transcript">Call transcript (sample)</label>
-          <textarea id="transcript" style="min-height:360px"></textarea>
+          <div class='seg' role='radiogroup' aria-label='How this call was captured' id='srcSeg'>
+            <button type='button' role='radio' data-src='gong' aria-checked='true'>Gong recording</button>
+            <button type='button' role='radio' data-src='external' aria-checked='false'>Customer transcript</button>
+            <button type='button' role='radio' data-src='debrief' aria-checked='false'>DSM debrief</button>
+          </div>
+          <p class='small muted' id='srcHelp'></p>
+          <div class='grid2' style='gap:10px;margin-bottom:10px'><div><label for='callTitle'>Call</label><input type='text' id='callTitle' value='Weekly deployment call'></div><div><label for='callDate'>Date</label><input type='date' id='callDate'></div></div>
+          <div id='extBox' hidden>
+            <div class='check' style='border:0;padding:0 0 6px'><input type='checkbox' id='extConsent'><label for='extConsent' style='color:var(--ink);font-size:.95rem;margin:0'>The customer agreed to share this transcript with Phenom for processing</label></div>
+            <div class='check' style='border:0;padding:0 0 10px'><input type='checkbox' id='extDelete' checked><label for='extDelete' style='color:var(--ink);font-size:.95rem;margin:0'>Delete the raw transcript after extraction and keep only the records I accept</label></div>
+            <label for='extFile'>Upload the transcript (.txt, .vtt or .srt), or paste it below</label>
+            <input type='file' id='extFile' accept='.txt,.vtt,.srt,text/plain,text/vtt' style='margin-bottom:6px'>
+            <div class='small muted' id='extStatus'></div>
+          </div>
+          <div id='debBox' hidden>
+            <div class='guard small' style='margin:0 0 8px'>Cover who attended, decisions made, decisions still needed, actions and owners, and signals you noticed. Describe what was said and done, not how people felt. Dictation uses your browser’s speech service.</div>
+            <div class='row' style='margin-bottom:6px'><button class='btn small' type='button' id='dictBtn'>Start dictation</button><button class='btn small' type='button' id='sampleDeb'>Use sample debrief</button><span class='small muted' id='dictStatus'></span></div>
+          </div>
+          <label for="transcript" id="tLabel" style="margin-top:6px">Call transcript (sample)</label>
+          <textarea id="transcript" style="min-height:320px"></textarea>
           <div class="row" style="margin-top:10px"><button class="btn primary" id="runScribe" type="button">Run call scribe</button><button class="btn" id="stopScribe" type="button" hidden>Stop</button><span class="small muted" id="scribeStatus"></span></div>
           <div class="err" id="scribeErr"></div>
         </div>
         <div id="scribeOut"><div class="panel muted">Run the agent to see its drafts here.</div></div>
       </div>
+      <div class='panel' style='margin-top:18px'><h3 style='margin-bottom:8px'>Call log</h3><div id='callLog'></div></div>
     </section>
 
     <section id="v-update" data-v="update" hidden>
@@ -612,7 +636,7 @@ function renderHypercells(){
 function renderDecisions(){
   const rows=[...S.decisions].sort((a,b)=>(b.open-a.open)||a.due.localeCompare(b.due));
   $("decBody").innerHTML=rows.map(d=>{const o=overdue(d),r=decRag(d).rag;
-    return`<tr class="${d.open?"":"closed"}"><td>${esc(d.text)}${d.impact?`<div class='small muted'>If delayed: ${esc(d.impact)}</div>`:''}${d.esc?`<div class='small muted'>Escalation path: ${esc(d.esc)}</div>`:''}${o&&!d.impact?`<div class='incomplete'>Overdue with no impact statement</div>`:''}${d.source?`<div class="small muted">From call scribe</div>`:""}</td><td>${esc(d.owner)}</td>
+    return`<tr class="${d.open?"":"closed"}"><td>${esc(d.text)}${d.impact?`<div class='small muted'>If delayed: ${esc(d.impact)}</div>`:''}${d.esc?`<div class='small muted'>Escalation path: ${esc(d.esc)}</div>`:''}${o&&!d.impact?`<div class='incomplete'>Overdue with no impact statement</div>`:''}${d.source?`<div class="small muted">Call scribe, from ${d.source==="scribe"?"Gong recording":esc(d.source)}</div>`:""}</td><td>${esc(d.owner)}</td>
     <td>${fmt(d.due)}${o?`<div class="small" style="color:var(--${r==="G"?"muted":r.toLowerCase()})">${o} days overdue</div>`:""}</td>
     <td>${d.blocks?esc(hcName(d.blocks)):"—"}</td>
     <td class="keep">${d.open?pill(r):"Closed"}</td>
@@ -758,7 +782,7 @@ let sampleFn=null,ctl=null;
 function scribePrompt(t){
   const hcs=S.hypercells.map(h=>`${h.id}: ${h.name} (${h.stage})`).join("; ");
   const open=S.decisions.filter(d=>d.open).map(d=>`${d.id}: ${d.text} [owner ${d.owner}]`).join("; ");
-  return`You are the call scribe agent for a Phenom Deployment Strategy Manager. Read the customer call transcript and draft structured records for the DSM to review.
+  return`You are the call scribe agent for a Phenom Deployment Strategy Manager. ${SRC[srcMode].prompt} Draft structured records for the DSM to review.
 Rules: refer to people by role only. Record facts, commitments and observable behavior. Never infer or describe emotions, attitudes or personal characteristics. Keep each item under 25 words.
 Hypercells: ${hcs}
 Open decisions already in the log: ${open}
@@ -776,7 +800,9 @@ $("transcript").addEventListener("input",()=>$("scribeErr").textContent="");
 $("stopScribe").addEventListener("click",()=>ctl?.abort());
 $("runScribe").addEventListener("click",async()=>{
   const t=$("transcript").value.trim();
-  if(t.length<80){$("scribeErr").textContent="Paste a call transcript first. The agent needs at least a few lines of conversation.";return}
+  if(t.length<80){$("scribeErr").textContent=srcMode==="debrief"?"Add a few sentences: who attended, what was decided and what is still open.":"Paste a call transcript first. The agent needs at least a few lines of conversation.";return}
+  if(srcMode==="external"&&!$("extConsent").checked){$("scribeErr").textContent="Confirm the customer agreed to share this transcript before processing it.";return}
+  window._srcLabel=SRC[srcMode].label;
   $("runScribe").disabled=true;$("scribeErr").textContent="";
   let result=null,offline=false;
   if(sampleFn){
@@ -790,7 +816,7 @@ $("runScribe").addEventListener("click",async()=>{
   if(offline||!result||typeof result!=="object"){result=FALLBACK;offline=true}
   $("stopScribe").hidden=true;$("runScribe").disabled=false;
   $("scribeStatus").textContent=offline?"Showing the built-in demo extraction (live AI unavailable here).":"Drafts ready for review.";
-  renderDrafts(result);
+  renderDrafts(result);logCall(offline);
 });
 
 function renderDrafts(r){
@@ -818,7 +844,7 @@ $("scribeOut").addEventListener("click",e=>{
   const acc=e.target.closest("[data-acc]"),dis=e.target.closest("[data-dis]"),cl=e.target.closest("[data-close]");
   if(acc){const d=window._drafts.dec[+acc.dataset.acc];const days=parseInt(d.due_in_days)||7;
     const blocks=S.hypercells.some(h=>h.id===d.blocks)?d.blocks:"";
-    S.decisions.push({id:"D"+S.nextId++,text:d.text,owner:d.owner||"Unassigned",due:iso(days),blocks,open:true,source:"scribe"});
+    S.decisions.push({id:"D"+S.nextId++,text:d.text,owner:d.owner||"Unassigned",due:iso(days),blocks,open:true,source:window._srcLabel||"Gong recording"});
     save();renderAll();$("dd-"+acc.dataset.acc).remove();toast("Added to the decision log")}
   if(cl){const d=S.decisions.find(x=>x.id===cl.dataset.close);if(d){d.open=false;d.closedAt=iso(0);save();renderAll();$(cl.dataset.card).remove();toast(`${d.id} closed`)}}
   if(dis){$(dis.dataset.dis)?.remove()}
@@ -1093,7 +1119,7 @@ function renderNotes(){
 }
 $('scribeOut').addEventListener('click',e=>{
   const sv=e.target.closest('[data-savenote]');
-  if(sv){const n=(window._drafts||{}).note||{};S.notes.unshift({id:'N'+Date.now(),date:iso(0),said:n.said||'',means:n.means||'',recommend:n.recommend||'',source:'Call scribe'});touch('intel');save();renderAll();sv.remove();toast('Saved to intelligence notes')}
+  if(sv){const n=(window._drafts||{}).note||{};S.notes.unshift({id:'N'+Date.now(),date:iso(0),said:n.said||'',means:n.means||'',recommend:n.recommend||'',source:'call scribe ('+(window._srcLabel||'Gong recording')+')'});touch('intel');save();renderAll();sv.remove();toast('Saved to intelligence notes')}
   if(e.target.closest('[data-acc],[data-close]')){touch('decision');save();renderWeek()}
 });
 $('hcGrid').addEventListener('click',e=>{if(e.target.closest('[data-adv],[data-back]')){touch('movement');save();renderWeek()}});
@@ -1136,6 +1162,63 @@ function renderPlaybook(){
     `<h3>Role ladder</h3><div class='panel tablewrap' style='margin-top:8px'><table class='data'><thead><tr><th>Level</th><th>Title</th><th>Scope</th></tr></thead><tbody>${LADDER.map(l=>`<tr><td><strong>${l[0]}</strong></td><td>${l[1]}</td><td>${l[2]}</td></tr>`).join('')}</tbody></table></div>`+
     `<h3>Ten core skills</h3><div class='panel' style='margin-top:8px'><p>${SKILLS.map((s,i)=>`${i+1}. ${s}`).join('&emsp;')}</p><p class='small muted' style='margin:0'>Politics reading, internal influence and risk judgment are the hardest to develop. Hire for business writing and polish; train for the rest.</p></div>`;
 }
+
+/* ---------- Call capture: Gong, customer transcript, DSM debrief ---------- */
+const SRC={
+  gong:{label:'Gong recording',help:'Phenom recorded this call in Gong, with the customer’s consent.',tlabel:'Call transcript (sample)',prompt:'Read the Gong transcript of this customer call.'},
+  external:{label:'Customer transcript',help:'The customer recorded the call and shared the transcript. Phenom did not record it.',tlabel:'The customer’s transcript',prompt:'Read this transcript, which the customer recorded and shared with Phenom.'},
+  debrief:{label:'DSM debrief',help:'Nothing was recorded. The DSM narrates or types what happened, ideally right after the call.',tlabel:'Your debrief',prompt:'This is not a transcript. It is the DSM’s own account of a call that was not recorded. Treat every statement as DSM-reported, never invent quotes, and write the note’s said field as a paraphrase that starts with Reported:.'}
+};
+const SAMPLE_DEBRIEF='Weekly call with Swissport, not recorded at the customer’s request. Attendees: TA Director, Recruitment Ops Manager, HRIT Lead, Phenom SA and me. The Recruitment Ops Manager confirmed they own UAT sign-off for scheduling, and the TA Director agreed. Scheduling defects come from missing roster data; the Recruitment Ops Manager will send the roster field mapping by Thursday. The background check integration is still undecided: the HRIT Lead said they need to align internally, and security has not scheduled its review. The TA Director wants an answer by the 20th because of winter peak. Hiring manager hub: Zurich confirmed as a pilot station; the TA Director will confirm the second station next week. Signal: the HRIT Lead did not commit to any date, and this is the third week the integration decision has slipped.';
+let srcMode='gong';
+const srcDrafts={gong:TRANSCRIPT,external:'',debrief:''};
+function setMode(m){
+  srcDrafts[srcMode]=$('transcript').value;srcMode=m;
+  document.querySelectorAll('#srcSeg [data-src]').forEach(b=>b.setAttribute('aria-checked',String(b.dataset.src===m)));
+  $('srcHelp').textContent=SRC[m].help;$('tLabel').textContent=SRC[m].tlabel;
+  $('extBox').hidden=m!=='external';$('debBox').hidden=m!=='debrief';
+  $('transcript').value=srcDrafts[m];
+  $('transcript').placeholder=m==='debrief'?'Type or dictate what happened on the call…':m==='external'?'Paste the transcript here, or upload a file above':'';
+  $('scribeErr').textContent='';
+  if(m!=='debrief'&&dictOn&&rec)rec.stop();
+}
+$('srcSeg').addEventListener('click',e=>{const b=e.target.closest('[data-src]');if(b&&b.dataset.src!==srcMode)setMode(b.dataset.src)});
+$('extConsent').addEventListener('change',()=>$('scribeErr').textContent='');
+$('sampleDeb').addEventListener('click',()=>{$('transcript').value=SAMPLE_DEBRIEF;$('scribeErr').textContent=''});
+$('extFile').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;const n=f.name.toLowerCase();
+  if(!(n.endsWith('.txt')||n.endsWith('.vtt')||n.endsWith('.srt'))){$('extStatus').textContent='Use a .txt, .vtt or .srt file. For Word or PDF transcripts, copy the text and paste it below.';e.target.value='';return}
+  if(f.size>1000000){$('extStatus').textContent='That file is over 1 MB. Paste the relevant part of the call instead.';e.target.value='';return}
+  const r=new FileReader();
+  r.onload=()=>{const lines=String(r.result).split(NL).map(l=>l.trim()).filter(l=>l&&l!=='WEBVTT'&&!l.includes('-->')&&isNaN(Number(l)));$('transcript').value=lines.join(NL);$('extStatus').textContent=`Loaded ${f.name}: ${lines.length} lines, timestamps removed.`;$('scribeErr').textContent=''};
+  r.onerror=()=>{$('extStatus').textContent='Couldn’t read that file. Paste the transcript instead.'};
+  r.readAsText(f);
+});
+let rec=null,dictOn=false,dictErr=false;
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+$('dictBtn').addEventListener('click',()=>{
+  if(!SR){$('dictStatus').textContent='Dictation isn’t available in this browser. Use your device’s dictation key, or type.';return}
+  if(dictOn){rec.stop();return}
+  try{rec=new SR()}catch(e){$('dictStatus').textContent='Dictation couldn’t start here. Type instead.';return}
+  rec.continuous=true;rec.interimResults=false;rec.lang=navigator.language||'en-US';dictErr=false;
+  rec.onresult=e=>{let txt='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)txt+=e.results[i][0].transcript}if(txt.trim()){const ta=$('transcript');ta.value=(ta.value.trim()?ta.value.trim()+' ':'')+txt.trim();$('scribeErr').textContent=''}};
+  rec.onerror=e=>{dictErr=true;$('dictStatus').textContent=e.error==='not-allowed'||e.error==='service-not-allowed'?'Microphone access is blocked here. Allow it in your browser, or type instead.':'Dictation stopped ('+e.error+'). You can start it again.'};
+  rec.onend=()=>{dictOn=false;$('dictBtn').textContent='Start dictation';if(!dictErr)$('dictStatus').textContent='Dictation stopped. Review the text, then run the call scribe.'};
+  try{rec.start();dictOn=true;$('dictBtn').textContent='Stop dictation';$('dictStatus').textContent='Listening. Speak naturally; text appears as you pause.'}catch(e){$('dictStatus').textContent='Dictation couldn’t start here. Type instead.'}
+});
+function logCall(offline){
+  S.calls=S.calls||[];
+  const del=srcMode==='external'&&$('extDelete').checked;
+  S.calls.unshift({id:'C'+Date.now(),date:$('callDate').value||iso(0),title:$('callTitle').value.trim()||'Customer call',source:SRC[srcMode].label,deleted:del,offline});
+  if(del){$('transcript').value='';srcDrafts.external='';$('extFile').value='';$('extStatus').textContent='Raw transcript deleted after extraction.'}
+  save();renderCallLog();
+}
+function renderCallLog(){
+  const C=S.calls||[];
+  const note=c=>c.source==='Gong recording'?'Recording held in Gong':c.source==='Customer transcript'?(c.deleted?'Customer-shared; raw transcript deleted after extraction':'Customer-shared; raw transcript retained'):'No recording; DSM-reported, not verbatim';
+  $('callLog').innerHTML=C.length?C.slice(0,8).map(c=>`<div class='row' style='justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)'><span><strong>${esc(c.title)}</strong> <span class='small muted'>${fmt(c.date)}</span></span><span class='row' style='gap:8px'><span class='srcpill'>${esc(c.source)}</span><span class='small muted'>${note(c)}</span></span></div>`).join(''):`<p class='small muted' style='margin:0'>No calls processed yet. Every processed call is logged with how it was captured.</p>`;
+}
+$('callDate').value=iso(0);setMode('gong');renderCallLog();
 
 renderAll();route();
 </script>
