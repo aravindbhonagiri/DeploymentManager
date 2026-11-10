@@ -176,7 +176,7 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
   <header class="top">
     <div>
       <div class="acct">Swissport <span class="sample-tag">Sample data</span></div>
-      <div class="acct-meta">Enterprise · <span id="hdrStage">Post-bootcamp deployment</span> · DST pilot prototype</div>
+      <div class="acct-meta">Enterprise · <span id="hdrStage">Post-bootcamp deployment</span> · Deployment Management pilot prototype</div>
     </div>
     <div class="row">
       <button class="btn small" id="resetBtn" type="button">Reset demo data</button>
@@ -197,7 +197,7 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
     <a href="#stakeholders" data-view="stakeholders">Stakeholder RAG</a>
     <a href="#change" data-view="change">Change management</a>
     <a href="#value" data-view="value">Value</a>
-    <div class="grp">DSM tools</div>
+    <div class="grp">DM tools</div>
     <a href="#scribe" data-view="scribe">Call scribe agent</a>
     <a href="#diagnose" data-view="diagnose">Diagnose</a>
     <a href="#notes" data-view="notes">Intelligence notes</a>
@@ -235,13 +235,13 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
           </div>
         </div>
         <div class="panel">
-          <h3>DSM override</h3>
+          <h3>DM override</h3>
           <p class="muted small">Override the computed color with a reason. It expires after 14 days and every override is logged.</p>
           <div class="grid2">
             <div><label for="ovrColor">Override to</label><select id="ovrColor"><option value="G">On track (green)</option><option value="A">Watch (amber)</option><option value="R">Holding (red)</option></select></div>
             <div style="display:flex;align-items:flex-end;gap:8px"><button class="btn primary" id="ovrSet" type="button">Apply override</button><button class="btn" id="ovrClear" type="button">Clear</button></div>
           </div>
-          <div style="margin-top:10px"><label for="ovrReason">Reason</label><input type="text" id="ovrReason" placeholder="What does the DSM know that the signals don’t?"><div class="err" id="ovrErr"></div></div>
+          <div style="margin-top:10px"><label for="ovrReason">Reason</label><input type="text" id="ovrReason" placeholder="What does the DM know that the signals don’t?"><div class="err" id="ovrErr"></div></div>
           <div class="small muted" id="ovrLog"></div>
         </div>
       </div>
@@ -275,7 +275,7 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
     <section id="v-stakeholders" data-v="stakeholders" hidden>
       <h2>Stakeholder RAG</h2>
       <p class="muted">Six relationship dimensions from the Stakeholder Management System blueprint. Every status carries a reason, evidence, owner, next action, due date and review date.</p>
-      <div class="guard">Influence and stance are DSM assessments, never inferred automatically. Objectives that are inferred or unverified are labeled and shown in italics, never as confirmed.</div>
+      <div class="guard">Influence and stance are DM assessments, never inferred automatically. Objectives that are inferred or unverified are labeled and shown in italics, never as confirmed.</div>
       <div class="health" style="grid-template-columns:minmax(220px,300px) 1fr">
         <div class="verdict" id="sVerdict"><div class="muted small">Stakeholder health</div><div class="word" id="sWord">–</div><div class="why" id="sWhy"></div></div>
         <div class="ovr" id="sStats" style="margin-top:0"></div>
@@ -287,12 +287,12 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
       <div class="panel tablewrap"><div class="sgrid" id="sMap"></div></div>
       <h3 style="margin-bottom:6px">Stakeholder directory</h3>
       <p class="muted small">Change any field to see the RAG respond. Try marking the TA Director as departed.</p>
-      <div class="panel tablewrap"><table class="data" style="min-width:980px"><thead><tr><th>Stakeholder</th><th>Influence</th><th>Access</th><th>Relationship</th><th>Stance (DSM-assessed)</th><th>Last contact</th><th>Confidence</th><th>Phenom owner</th><th>Status</th></tr></thead><tbody id="sDir"></tbody></table></div>
+      <div class="panel tablewrap"><table class="data" style="min-width:980px"><thead><tr><th>Stakeholder</th><th>Influence</th><th>Access</th><th>Relationship</th><th>Stance (DM-assessed)</th><th>Last contact</th><th>Confidence</th><th>Phenom owner</th><th>Status</th></tr></thead><tbody id="sDir"></tbody></table></div>
     </section>
 
     <section id='v-week' data-v='week' hidden>
       <h2>Weekly check-in</h2>
-      <p class='muted'>Five questions. Every week. Answers are drafted from the account data; the DSM edits them, scores movement and saves.</p>
+      <p class='muted'>Five questions. Every week. Answers are drafted from the account data; the DM edits them, scores movement and saves.</p>
       <div class='grid2'>
         <div class='panel'>
           <h3 style='margin-bottom:8px'>Customer movement score</h3>
@@ -315,7 +315,7 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
 
     <section id='v-journey' data-v='journey' hidden>
       <h2>Post-bootcamp journey</h2>
-      <p class='muted'>Six stages from bootcamp to expansion. The DSM owns momentum across all six: go-live is a milestone, adoption is the mission.</p>
+      <p class='muted'>Six stages from bootcamp to expansion. The DM owns momentum across all six: go-live is a milestone, adoption is the mission.</p>
       <div class='journey' id='jStrip'></div>
       <div class='panel' id='jDetail'></div>
     </section>
@@ -359,7 +359,7 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
           <ul class='ev' id='dgEvidence' style='color:var(--ink);font-size:.95rem'></ul>
           <div style='margin-top:12px'><label for='dgType'>Resistance type</label><select id='dgType'></select></div>
           <div class='ovr' id='dgResponse'></div>
-          <div style='margin-top:10px'><label for='dgMove'>Recommended DSM move</label><input type='text' id='dgMove'></div>
+          <div style='margin-top:10px'><label for='dgMove'>Recommended DM move</label><input type='text' id='dgMove'></div>
           <div class='row' style='margin-top:10px'><button class='btn primary' id='dgSave' type='button'>Save to intelligence notes</button></div>
           <div class='err' id='dgErr'></div>
         </div>
@@ -368,7 +368,7 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
 
     <section id='v-notes' data-v='notes' hidden>
       <h2>Intelligence notes</h2>
-      <p class='muted'>The DSM’s most important artifact: what the customer says, what it indicates, and what leadership needs to know. Internal only, written as facts and behavior.</p>
+      <p class='muted'>The DM’s most important artifact: what the customer says, what it indicates, and what leadership needs to know. Internal only, written as facts and behavior.</p>
       <div id='notesList'></div>
     </section>
 
@@ -387,16 +387,16 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
     </section>
 
     <section id='v-playbook' data-v='playbook' hidden>
-      <h2>DSM playbook</h2>
-      <p class='muted'>The operating culture of the Deployment Strategy Team, with a live self-check on this account.</p>
+      <h2>DM playbook</h2>
+      <p class='muted'>The operating culture of the Deployment Management Team, with a live self-check on this account.</p>
       <div id='pbBody'></div>
     </section>
 
     <section id='v-customer' data-v='customer' hidden>
       <h2>Customer view</h2>
-      <p class='muted'>What Swissport sees. Standard updates appear automatically; the DSM chooses what else to share, edits the wording, and publishes when ready.</p>
+      <p class='muted'>What Swissport sees. Standard updates appear automatically; the DM chooses what else to share, edits the wording, and publishes when ready.</p>
       <div class='panel row' style='justify-content:space-between'>
-        <div class='seg' role='radiogroup' aria-label='View mode' id='cvMode' style='margin:0;min-width:300px'><button type='button' role='radio' data-cv='curate' aria-checked='true'>Curate as DSM</button><button type='button' role='radio' data-cv='preview' aria-checked='false'>Preview as customer</button></div>
+        <div class='seg' role='radiogroup' aria-label='View mode' id='cvMode' style='margin:0;min-width:300px'><button type='button' role='radio' data-cv='curate' aria-checked='true'>Curate as DM</button><button type='button' role='radio' data-cv='preview' aria-checked='false'>Preview as customer</button></div>
         <div class='row'><span class='small' id='pubState'></span><button class='btn primary' id='pubBtn' type='button'>Publish update</button></div>
       </div>
       <div id='cvCurate'></div>
@@ -405,14 +405,14 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
 
     <section id="v-scribe" data-v="scribe" hidden>
       <h2>Call scribe agent</h2>
-      <p class="muted">Turns a customer call into draft decisions, actions and an intelligence note, whether Phenom recorded it, the customer shared their own transcript, or nothing was recorded and the DSM debriefs it by voice or typing.</p>
-      <div class="guard">Guardrails: drafts only, nothing enters the record until the DSM accepts it. Notes describe facts and behavior, never emotions or personal characterizations. Stakeholders are referred to by role.</div>
+      <p class="muted">Turns a customer call into draft decisions, actions and an intelligence note, whether Phenom recorded it, the customer shared their own transcript, or nothing was recorded and the DM debriefs it by voice or typing.</p>
+      <div class="guard">Guardrails: drafts only, nothing enters the record until the DM accepts it. Notes describe facts and behavior, never emotions or personal characterizations. Stakeholders are referred to by role.</div>
       <div class="grid2">
         <div>
           <div class='seg' role='radiogroup' aria-label='How this call was captured' id='srcSeg'>
             <button type='button' role='radio' data-src='gong' aria-checked='true'>Gong recording</button>
             <button type='button' role='radio' data-src='external' aria-checked='false'>Customer transcript</button>
-            <button type='button' role='radio' data-src='debrief' aria-checked='false'>DSM debrief</button>
+            <button type='button' role='radio' data-src='debrief' aria-checked='false'>DM debrief</button>
           </div>
           <p class='small muted' id='srcHelp'></p>
           <div class='grid2' style='gap:10px;margin-bottom:10px'><div><label for='callTitle'>Call</label><input type='text' id='callTitle' value='Weekly deployment call'></div><div><label for='callDate'>Date</label><input type='date' id='callDate'></div></div>
@@ -439,7 +439,7 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
 
     <section id="v-update" data-v="update" hidden>
       <h2>Weekly exec update</h2>
-      <p class="muted">Drafted from the register, decision log and health score. The DSM sharpens it before sending.</p>
+      <p class="muted">Drafted from the register, decision log and health score. The DM sharpens it before sending.</p>
       <div class="panel">
         <label for="updateText">Draft (editable)</label>
         <textarea id="updateText" style="min-height:300px"></textarea>
@@ -503,19 +503,19 @@ function seed(){return{
   renewal:iso(210),
   stakeholders:[
     {id:"P1",role:"CHRO",rel:["Executive sponsor","Economic buyer"],influence:"High",access:"Indirect",strength:"Developing",stance:"Neutral",last:iso(-41),confidence:"Source-supported",owner:"Account Manager",status:"Active",objective:"Cut frontline time to hire before winter peak",objConf:"Source-supported"},
-    {id:"P2",role:"TA Director",rel:["Executive sponsor","Champion"],influence:"High",access:"Direct",strength:"Strong",stance:"Positive",last:iso(-2),confidence:"Confirmed",owner:"DSM",status:"Active",objective:"Faster screening and scheduling for ramp agents",objConf:"Confirmed"},
-    {id:"P3",role:"Recruitment Ops Manager",rel:["Champion","Process owner"],influence:"Medium",access:"Direct",strength:"Strong",stance:"Positive",last:iso(-2),confidence:"Confirmed",owner:"DSM",status:"Active",objective:"Fewer manual interview reschedules",objConf:"Confirmed"},
+    {id:"P2",role:"TA Director",rel:["Executive sponsor","Champion"],influence:"High",access:"Direct",strength:"Strong",stance:"Positive",last:iso(-2),confidence:"Confirmed",owner:"DM",status:"Active",objective:"Faster screening and scheduling for ramp agents",objConf:"Confirmed"},
+    {id:"P3",role:"Recruitment Ops Manager",rel:["Champion","Process owner"],influence:"Medium",access:"Direct",strength:"Strong",stance:"Positive",last:iso(-2),confidence:"Confirmed",owner:"DM",status:"Active",objective:"Fewer manual interview reschedules",objConf:"Confirmed"},
     {id:"P4",role:"HRIT Lead",rel:["Technical approver","Risk or blocker"],influence:"High",access:"Direct",strength:"Weak",stance:"Mixed",last:iso(-2),confidence:"Source-supported",owner:"Solution Architect",status:"Active",objective:"Keep integrations within security policy",objConf:"Inferred"},
     {id:"P5",role:"Head of Information Security",rel:["Technical approver"],influence:"Medium",access:"None",strength:"Unknown",stance:"Unknown",last:"",confidence:"Unverified",owner:"",status:"Active",objective:"",objConf:"Unverified"},
-    {id:"P6",role:"Data Protection Officer",rel:["Influencer"],influence:"Medium",access:"Direct",strength:"Developing",stance:"Neutral",last:iso(-10),confidence:"Confirmed",owner:"DSM",status:"Active",objective:"Compliant retention of candidate data",objConf:"Confirmed"},
+    {id:"P6",role:"Data Protection Officer",rel:["Influencer"],influence:"Medium",access:"Direct",strength:"Developing",stance:"Neutral",last:iso(-10),confidence:"Confirmed",owner:"DM",status:"Active",objective:"Compliant retention of candidate data",objConf:"Confirmed"},
     {id:"P7",role:"Procurement Manager",rel:["Renewal stakeholder"],influence:"Medium",access:"Indirect",strength:"Developing",stance:"Neutral",last:iso(-40),confidence:"Source-supported",owner:"Account Manager",status:"Active",objective:"",objConf:"Unverified"}
   ],
   srag:{
     exec:{owner:"Account Manager",next:"Ask TA Director to set up a direct CHRO touchpoint before the QBR",due:iso(14),reviewed:iso(-5)},
-    champion:{owner:"DSM",next:"",due:"",reviewed:iso(-5)},
+    champion:{owner:"DM",next:"",due:"",reviewed:iso(-5)},
     access:{owner:"Account Manager",next:"Map renewal decision group with Procurement",due:iso(30),reviewed:iso(-12)},
-    relationship:{owner:"Solution Architect",next:"Joint SA and DSM working session with HRIT Lead on integration route",due:iso(7),reviewed:iso(-5)},
-    value:{owner:"DSM",next:"Confirm CHRO outcome in writing at next exec update",due:iso(21),reviewed:iso(-33)},
+    relationship:{owner:"Solution Architect",next:"Joint SA and DM working session with HRIT Lead on integration route",due:iso(7),reviewed:iso(-5)},
+    value:{owner:"DM",next:"Confirm CHRO outcome in writing at next exec update",due:iso(21),reviewed:iso(-33)},
     stability:{owner:"",next:"",due:"",reviewed:iso(-5)}
   }
 }}
@@ -616,7 +616,7 @@ function renderOverview(){
   $("verdictWord").textContent=WORD[eff];
   $("verdictWhy").textContent=roll.why;
   $("ovrBox").innerHTML=ov
-    ?`Computed: <strong>${WORD[roll.rag]}</strong>. DSM override to <strong>${WORD[ov.rag]}</strong> until ${fmt(ov.expires)}: “${esc(ov.reason)}”`
+    ?`Computed: <strong>${WORD[roll.rag]}</strong>. DM override to <strong>${WORD[ov.rag]}</strong> until ${fmt(ov.expires)}: “${esc(ov.reason)}”`
     :`No override. Showing the computed score.`;
   $("dims").innerHTML=dims.map(d=>`<div class="dim"><div class="dim-head"><span class="dim-name">${d.name}</span>${pill(d.rag)}</div>
     <div class="trend">${trend(d.key,d.rag)} vs. last week · ${d.src}</div>
@@ -650,7 +650,7 @@ function renderHypercells(){
 function renderDecisions(){
   const rows=[...S.decisions].sort((a,b)=>(b.open-a.open)||a.due.localeCompare(b.due));
   $("decBody").innerHTML=rows.map(d=>{const o=overdue(d),r=decRag(d).rag;
-    return`<tr class="${d.open?"":"closed"}"><td>${esc(d.text)}${d.impact?`<div class='small muted'>If delayed: ${esc(d.impact)}</div>`:''}${d.esc?`<div class='small muted'>Escalation path: ${esc(d.esc)}</div>`:''}${o&&!d.impact?`<div class='incomplete'>Overdue with no impact statement</div>`:''}${d.open&&custOwned(d)?`<div class='small' style='color:var(--g)'>Visible to customer (standard)</div>`:(d.open&&S.share&&S.share.items['dec:'+d.id]&&S.share.items['dec:'+d.id].shared?`<div class='small' style='color:var(--g)'>Shared with customer by DSM</div>`:'')}${d.source?`<div class="small muted">Call scribe, from ${d.source==="scribe"?"Gong recording":esc(d.source)}</div>`:""}</td><td>${esc(d.owner)}</td>
+    return`<tr class="${d.open?"":"closed"}"><td>${esc(d.text)}${d.impact?`<div class='small muted'>If delayed: ${esc(d.impact)}</div>`:''}${d.esc?`<div class='small muted'>Escalation path: ${esc(d.esc)}</div>`:''}${o&&!d.impact?`<div class='incomplete'>Overdue with no impact statement</div>`:''}${d.open&&custOwned(d)?`<div class='small' style='color:var(--g)'>Visible to customer (standard)</div>`:(d.open&&S.share&&S.share.items['dec:'+d.id]&&S.share.items['dec:'+d.id].shared?`<div class='small' style='color:var(--g)'>Shared with customer by DM</div>`:'')}${d.source?`<div class="small muted">Call scribe, from ${d.source==="scribe"?"Gong recording":esc(d.source)}</div>`:""}</td><td>${esc(d.owner)}</td>
     <td>${fmt(d.due)}${o?`<div class="small" style="color:var(--${r==="G"?"muted":r.toLowerCase()})">${o} days overdue</div>`:""}</td>
     <td>${d.blocks?esc(hcName(d.blocks)):"—"}</td>
     <td class="keep">${d.open?pill(r):"Closed"}</td>
@@ -674,7 +674,7 @@ function draftUpdate(){
   const topRisk=risks.length?`${risks[0].name} (${WORD[risks[0].rag]}): ${risks[0].ev[0]||""}`:"No material risks this week.";
   const decNeeded=S.decisions.filter(d=>d.open).sort((a,b)=>overdue(b)-overdue(a))[0];
   const nextHc=H.find(h=>h.stage!=="Live");
-  return`Swissport · week of ${fmt(iso(0))} · Health: ${WORD[eff]}${ov?" (DSM override)":""}
+  return`Swissport · week of ${fmt(iso(0))} · Health: ${WORD[eff]}${ov?" (DM override)":""}
 
 1. What moved: ${[...moved,...closed].join("; ")||"No stage changes or closed decisions this week."}
 2. What didn’t: ${stuck.join("; ")||"Nothing stalled."}
@@ -753,24 +753,24 @@ $("resetBtn").addEventListener("click",()=>{S=seed();save();delete $("updateText
 
 /* ---------- Call scribe agent ---------- */
 const TRANSCRIPT=`Weekly deployment call — Swissport / Phenom (sample transcript)
-Attendees: TA Director (sponsor), Recruitment Ops Manager, HRIT Lead, Phenom DSM, Phenom SA
+Attendees: TA Director (sponsor), Recruitment Ops Manager, HRIT Lead, Phenom DM, Phenom SA
 
-DSM: Thanks all. Three items: scheduling UAT, the background check integration, and the hiring manager hub pilot.
+DM: Thanks all. Three items: scheduling UAT, the background check integration, and the hiring manager hub pilot.
 Recruitment Ops Manager: On scheduling, my team found that interview slots don't respect station shift patterns at night. We logged six defects; four were reopened after the last fix.
 SA: The shift calendar sync needs the roster export from your workforce system. Once we have the field mapping we can fix it in two days.
-DSM: Who can send the roster field mapping?
+DM: Who can send the roster field mapping?
 Recruitment Ops Manager: I can get it from our workforce planning team by Thursday.
-DSM: Great. And who signs off scheduling UAT on your side?
+DM: Great. And who signs off scheduling UAT on your side?
 Recruitment Ops Manager: Probably me, but I'd want the TA Director to confirm.
 TA Director: Yes, it's you. Sign-off sits with Recruitment Ops.
-DSM: On the background check integration, we still need a decision between the vendor API and the file-based route.
+DM: On the background check integration, we still need a decision between the vendor API and the file-based route.
 HRIT Lead: We need to align internally. Security wants to review the API option and that review hasn't been scheduled.
-DSM: Can we agree a date for the security review?
+DM: Can we agree a date for the security review?
 HRIT Lead: I'll ask for it this week, but I can't commit to a date yet.
 TA Director: This is holding up airside onboarding for winter peak. I want an answer by the 20th.
-DSM: Understood. For the hiring manager hub, are Zurich and Geneva still the pilot stations?
+DM: Understood. For the hiring manager hub, are Zurich and Geneva still the pilot stations?
 TA Director: Zurich yes. Geneva may change. Let me confirm next week.
-DSM: Thanks. I'll send the summary and the decision list after the call.`;
+DM: Thanks. I'll send the summary and the decision list after the call.`;
 $("transcript").value=TRANSCRIPT;
 
 const FALLBACK={
@@ -782,7 +782,7 @@ const FALLBACK={
   actions:[
     {text:"Send roster field mapping for shift calendar sync",owner:"Recruitment Ops Manager",due_in_days:3},
     {text:"Request security review date for vendor API",owner:"HRIT Lead",due_in_days:5},
-    {text:"Send call summary and decision list",owner:"Phenom DSM",due_in_days:1}
+    {text:"Send call summary and decision list",owner:"Phenom DM",due_in_days:1}
   ],
   note:{said:"“We need to align internally” on the background check integration; no date committed for the security review.",
         means:"The integration decision has no owner with authority to close it. Security review is unscheduled, and the sponsor has set a deadline HRIT has not accepted.",
@@ -796,7 +796,7 @@ let sampleFn=null,ctl=null;
 function scribePrompt(t){
   const hcs=S.hypercells.map(h=>`${h.id}: ${h.name} (${h.stage})`).join("; ");
   const open=S.decisions.filter(d=>d.open).map(d=>`${d.id}: ${d.text} [owner ${d.owner}]`).join("; ");
-  return`You are the call scribe agent for a Phenom Deployment Strategy Manager. ${SRC[srcMode].prompt} Draft structured records for the DSM to review.
+  return`You are the call scribe agent for a Phenom Deployment Manager. ${SRC[srcMode].prompt} Draft structured records for the DM to review.
 Rules: refer to people by role only. Record facts, commitments and observable behavior. Never infer or describe emotions, attitudes or personal characteristics. Keep each item under 25 words.
 Hypercells: ${hcs}
 Open decisions already in the log: ${open}
@@ -804,7 +804,7 @@ Return ONLY a JSON object, no markdown, with this shape:
 {"decisions":[{"text":"new decision still needed","owner":"role","due_in_days":number,"blocks":"HC id or empty"}],
  "closed":[{"text":"decision that was made on the call","matches":"open decision id it resolves, or empty"}],
  "actions":[{"text":"","owner":"role","due_in_days":number}],
- "note":{"said":"what was said, quoted briefly","means":"what it indicates about the deployment, factual","recommend":"one recommended DSM move"},
+ "note":{"said":"what was said, quoted briefly","means":"what it indicates about the deployment, factual","recommend":"one recommended DM move"},
  "risks":["short risk statements"]}
 Transcript:
 ${t}`;
@@ -865,7 +865,7 @@ $("scribeOut").addEventListener("click",e=>{
 });
 
 /* ---------- Stakeholder RAG ---------- */
-const POWN=["","DSM","Account Manager","Solution Architect","CVM","Phenom exec sponsor"];
+const POWN=["","DM","Account Manager","Solution Architect","CVM","Phenom exec sponsor"];
 const OPT={influence:["High","Medium","Low","Unknown"],access:["Direct","Indirect","None"],strength:["Strong","Developing","Weak","Unknown"],stance:["Positive","Neutral","Mixed","Negative","Unknown"],confidence:["Confirmed","Source-supported","Inferred","Unverified"],status:["Active","Role changed","Departed"]};
 const selF=(k,v,p)=>`<select aria-label="${k}" data-p="${p}" data-k="${k}">${OPT[k].map(o=>`<option${o===v?" selected":""}>${o}</option>`).join("")}</select>`;
 
@@ -937,7 +937,7 @@ $("sDims").addEventListener("change",e=>{const el=e.target.closest("[data-fld]")
 $("sDims").addEventListener("click",e=>{const b=e.target.closest("[data-rev]");if(!b)return;S.srag[b.dataset.rev].reviewed=iso(0);save();renderStakeholders();toast("Marked reviewed today")});
 $("sDir").addEventListener("change",e=>{const el=e.target.closest("[data-k]");if(!el)return;const p=S.stakeholders.find(x=>x.id===el.dataset.p);p[el.dataset.k]=el.value;save();renderStakeholders();if(el.dataset.k==="status")toast(`${p.role} marked ${el.value.toLowerCase()}`)});
 
-/* ---------- Full DSM role: journey, weekly check-in, change, diagnose, notes, escalation, playbook ---------- */
+/* ---------- Full DM role: journey, weekly check-in, change, diagnose, notes, escalation, playbook ---------- */
 const NL=String.fromCharCode(10);
 const JOURNEY=[
   {name:'Bootcamp complete',items:['Excitement captured','Scope documented','Stakeholders mapped']},
@@ -1108,7 +1108,7 @@ $('dgAI').addEventListener('click',async()=>{
   const i=+$('dgSaid').value,said=i===3?$('dgOther').value.trim():SAYS[i].said;
   if(!said){$('dgErr').textContent='Enter what the customer said first.';return}
   $('dgAI').disabled=true;$('dgStatus').textContent='Thinking…';
-  const prompt=`You help a Phenom Deployment Strategy Manager diagnose what a customer statement indicates during an AI deployment in HR. Statement: ${said} Said by: ${$('dgWho').value}. Evidence from the account: ${dgEvidence().join('; ')}. Classify the most likely resistance type as exactly one of Fear, Control, Workload, Political, Confidence. Describe organizational situations factually and never describe anyone’s emotions or personality. Return only a JSON object with keys: type (string), meanings (array of 2 to 4 short possible underlying causes), move (one recommended DSM move under 25 words), ask (array of 2 short questions the DSM should ask to confirm).`;
+  const prompt=`You help a Phenom Deployment Manager diagnose what a customer statement indicates during an AI deployment in HR. Statement: ${said} Said by: ${$('dgWho').value}. Evidence from the account: ${dgEvidence().join('; ')}. Classify the most likely resistance type as exactly one of Fear, Control, Workload, Political, Confidence. Describe organizational situations factually and never describe anyone’s emotions or personality. Return only a JSON object with keys: type (string), meanings (array of 2 to 4 short possible underlying causes), move (one recommended DM move under 25 words), ask (array of 2 short questions the DM should ask to confirm).`;
   let r=null;try{r=await sampleFn.json(prompt,{modelTier:'default'})}catch(e){r=null}
   if(r&&Array.isArray(r.meanings)&&r.meanings.length){const t=RTYPES[r.type]?r.type:'Political';dgAIres={type:t,meanings:r.meanings.slice(0,4).map(String),ask:Array.isArray(r.ask)?r.ask.slice(0,3).map(String):[]};$('dgType').value=t;if(r.move){$('dgMove').value=String(r.move);$('dgMove').dataset.edited='1'}$('dgStatus').textContent='AI suggestions. Check only the ones the evidence supports.'}
   else{dgAIres=null;$('dgType').value=kw(said);delete $('dgMove').dataset.edited;$('dgStatus').textContent='AI unavailable here. Type suggested by keyword rules.'}
@@ -1127,7 +1127,7 @@ window.addEventListener('hashchange',()=>{if(location.hash==='#diagnose')renderD
 
 /* Intelligence notes */
 function renderNotes(){
-  $('notesList').innerHTML=S.notes.length?S.notes.map(n=>`<div class='panel'><div class='row' style='justify-content:space-between'><span class='small muted'>${fmt(n.date)}, from ${esc(n.source||'DSM')}</span>${n.type?`<span class='small'><strong>${n.type}</strong> resistance</span>`:''}</div>
+  $('notesList').innerHTML=S.notes.length?S.notes.map(n=>`<div class='panel'><div class='row' style='justify-content:space-between'><span class='small muted'>${fmt(n.date)}, from ${esc(n.source||'DM')}</span>${n.type?`<span class='small'><strong>${n.type}</strong> resistance</span>`:''}</div>
     <div class='note' style='margin-top:8px'><p><strong>Said:</strong> ${esc(n.said)}</p><p><strong>What it indicates:</strong> ${esc(n.means)}</p><p style='margin:0'><strong>Recommended move:</strong> ${esc(n.recommend||'None yet')}</p></div>
     ${!n.recommend?`<div class='incomplete' style='margin-top:8px'>No recommendation. Diagnose, structure and recommend; don’t just relay.</div>`:''}</div>`).join(''):`<div class='panel muted'>No notes yet. Save one from the call scribe or a diagnosis.</div>`;
 }
@@ -1163,25 +1163,25 @@ $('eRedraft').addEventListener('click',()=>renderEscalate(true));
 $('eCopy').addEventListener('click',async()=>{const txt=EF.map((id,i)=>EN[i]+': '+$(id).value.trim()).join(NL+NL);try{await navigator.clipboard.writeText(txt);$('eMsg').textContent='Copied.'}catch(e){$('eMsg').textContent='Copy is blocked here. Select the text and copy it manually.'}});
 
 /* Playbook */
-const PRINCIPLES=[['Movement over status','Green status with no movement is not healthy.'],['Truth over comfort','Tell the truth early. Early truth prevents late escalations.'],['Simplicity over complexity','If the customer is confused, deployment slows down.'],['Adoption over go-live','If users don’t change behavior, deployment hasn’t created value.'],['Political awareness without drama','Create clarity, not drama, around politics.'],['Empathy with boundaries','Structure the problem. Don’t emotionally carry it.'],['Small wins create trust','Prove value first. Then expand.'],['Writing creates alignment','If it’s not written clearly, it’s not aligned.'],['Escalate with recommendation','Facts, impact, options, recommendation, decision needed.'],['Customer reality reaches product','DST brings real customer intelligence back to Phenom.']];
+const PRINCIPLES=[['Movement over status','Green status with no movement is not healthy.'],['Truth over comfort','Tell the truth early. Early truth prevents late escalations.'],['Simplicity over complexity','If the customer is confused, deployment slows down.'],['Adoption over go-live','If users don’t change behavior, deployment hasn’t created value.'],['Political awareness without drama','Create clarity, not drama, around politics.'],['Empathy with boundaries','Structure the problem. Don’t emotionally carry it.'],['Small wins create trust','Prove value first. Then expand.'],['Writing creates alignment','If it’s not written clearly, it’s not aligned.'],['Escalate with recommendation','Facts, impact, options, recommendation, decision needed.'],['Customer reality reaches product','The team brings real customer intelligence back to Phenom.']];
 const FAILS=[['Status reporting team','Movement is success, not a green dashboard.'],['Meeting notes team','Documenting what happened is not making things happen.'],['Complaint relay team','Diagnose, structure and recommend.'],['Blame team','Create clarity and movement, not blame.'],['Traditional PMO','Focus on movement, adoption, risk, politics and value.'],['Hero team','Build playbooks, training and rhythm instead of relying on heroes.']];
-const LADDER=[['L1','Deployment Strategy Coordinator','Meeting notes, action items, plan hygiene, status reports'],['L2','Associate Deployment Strategy Manager','Small workstreams, follow-up, simple stakeholder mapping, basic risk tracking'],['L3','Deployment Strategy Manager','Full deployment communication, stakeholder map, weekly movement plan, risk and blocker management, executive summaries'],['L4','Senior Deployment Strategy Manager','Complex multi-stakeholder deployments, HRIT, TA, TM and legal politics, escalation prevention'],['L5','Lead Deployment Strategy Manager','Large enterprise and multi-product deployments, playbooks, coaching L1 to L4'],['L6','Principal Deployment Strategist','Top strategic customers, broken deployments, CHRO and CIO-level alignment resets'],['L7','Distinguished Deployment Strategist','Company-level standards and AI change management thought leadership']];
+const LADDER=[['L1','Deployment Coordinator','Meeting notes, action items, plan hygiene, status reports'],['L2','Associate Deployment Manager','Small workstreams, follow-up, simple stakeholder mapping, basic risk tracking'],['L3','Deployment Manager','Full deployment communication, stakeholder map, weekly movement plan, risk and blocker management, executive summaries'],['L4','Senior Deployment Manager','Complex multi-stakeholder deployments, HRIT, TA, TM and legal politics, escalation prevention'],['L5','Lead Deployment Manager','Large enterprise and multi-product deployments, playbooks, coaching L1 to L4'],['L6','Principal Deployment Manager','Top strategic customers, broken deployments, CHRO and CIO-level alignment resets'],['L7','Distinguished Deployment Manager','Company-level standards and AI change management thought leadership']];
 const SKILLS=['Customer politics reading','Executive communication','HR business understanding','AI fluency','Meeting control','Internal influence','Business writing','Change management','Risk judgment','Polish'];
 function renderPlaybook(){
   const checks={'Status reporting team':rollup(dimensions()).rag==='G'&&!weekEvents().length?'Account shows green with no movement this week.':'','Meeting notes team':S.notes.some(n=>!n.recommend)?'Some intelligence notes have no recommended move.':'','Complaint relay team':S.resist.some(r=>r.open&&daysSince(r.date)>14)?'A resistance signal has been open for over two weeks.':'','Traditional PMO':S.decisions.some(d=>overdue(d)>0&&!d.impact)?'An overdue decision has no impact statement.':''};
-  $('pbBody').innerHTML=`<h3>Self-check: what DST must not become</h3><div class='panel' style='margin-top:8px'>${FAILS.map(([n,d])=>{const has=n in checks,w=checks[n];return `<div class='row' style='justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)'><span><strong>${n}.</strong> <span class='small muted'>${d}</span></span><span class='small ${has?(w?'incomplete':'ok'):'muted'}'>${has?(w||'Clear on this account'):'Discuss in coaching'}</span></div>`}).join('')}</div>`+
+  $('pbBody').innerHTML=`<h3>Self-check: what the team must not become</h3><div class='panel' style='margin-top:8px'>${FAILS.map(([n,d])=>{const has=n in checks,w=checks[n];return `<div class='row' style='justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)'><span><strong>${n}.</strong> <span class='small muted'>${d}</span></span><span class='small ${has?(w?'incomplete':'ok'):'muted'}'>${has?(w||'Clear on this account'):'Discuss in coaching'}</span></div>`}).join('')}</div>`+
     `<h3 style='margin-top:22px'>Ten operating principles</h3><div class='pbgrid'>${PRINCIPLES.map(([n,d],i)=>`<div class='panel' style='margin:0'><div class='small muted'>${i+1}</div><h3 style='margin:2px 0 4px'>${n}</h3><div class='small'>${d}</div></div>`).join('')}</div>`+
     `<h3>Five types of change resistance</h3><div class='pbgrid'>${Object.entries(RTYPES).map(([t,v])=>`<div class='panel' style='margin:0'><h3 style='margin-bottom:4px'>${t}</h3><div class='small muted'>${v.sig}</div><div class='small' style='margin-top:6px'><strong>Response:</strong> ${v.resp}</div></div>`).join('')}</div>`+
-    `<h3>Customer movement score</h3><div class='panel tablewrap' style='margin-top:8px'><table class='data'><thead><tr><th>Score</th><th>What it looks like</th><th>DSM action</th></tr></thead><tbody>${SCORES.map(s=>`<tr><td><strong>${s.n} ${s.l}</strong></td><td>${s.d}</td><td>${s.a}</td></tr>`).join('')}</tbody></table></div>`+
+    `<h3>Customer movement score</h3><div class='panel tablewrap' style='margin-top:8px'><table class='data'><thead><tr><th>Score</th><th>What it looks like</th><th>DM action</th></tr></thead><tbody>${SCORES.map(s=>`<tr><td><strong>${s.n} ${s.l}</strong></td><td>${s.d}</td><td>${s.a}</td></tr>`).join('')}</tbody></table></div>`+
     `<h3>Role ladder</h3><div class='panel tablewrap' style='margin-top:8px'><table class='data'><thead><tr><th>Level</th><th>Title</th><th>Scope</th></tr></thead><tbody>${LADDER.map(l=>`<tr><td><strong>${l[0]}</strong></td><td>${l[1]}</td><td>${l[2]}</td></tr>`).join('')}</tbody></table></div>`+
     `<h3>Ten core skills</h3><div class='panel' style='margin-top:8px'><p>${SKILLS.map((s,i)=>`${i+1}. ${s}`).join('&emsp;')}</p><p class='small muted' style='margin:0'>Politics reading, internal influence and risk judgment are the hardest to develop. Hire for business writing and polish; train for the rest.</p></div>`;
 }
 
-/* ---------- Call capture: Gong, customer transcript, DSM debrief ---------- */
+/* ---------- Call capture: Gong, customer transcript, DM debrief ---------- */
 const SRC={
   gong:{label:'Gong recording',help:'Phenom recorded this call in Gong, with the customer’s consent.',tlabel:'Call transcript (sample)',prompt:'Read the Gong transcript of this customer call.'},
   external:{label:'Customer transcript',help:'The customer recorded the call and shared the transcript. Phenom did not record it.',tlabel:'The customer’s transcript',prompt:'Read this transcript, which the customer recorded and shared with Phenom.'},
-  debrief:{label:'DSM debrief',help:'Nothing was recorded. The DSM narrates or types what happened, ideally right after the call.',tlabel:'Your debrief',prompt:'This is not a transcript. It is the DSM’s own account of a call that was not recorded. Treat every statement as DSM-reported, never invent quotes, and write the note’s said field as a paraphrase that starts with Reported:.'}
+  debrief:{label:'DM debrief',help:'Nothing was recorded. The DM narrates or types what happened, ideally right after the call.',tlabel:'Your debrief',prompt:'This is not a transcript. It is the DM’s own account of a call that was not recorded. Treat every statement as DM-reported, never invent quotes, and write the note’s said field as a paraphrase that starts with Reported:.'}
 };
 const SAMPLE_DEBRIEF='Weekly call with Swissport, not recorded at the customer’s request. Attendees: TA Director, Recruitment Ops Manager, HRIT Lead, Phenom SA and me. The Recruitment Ops Manager confirmed they own UAT sign-off for scheduling, and the TA Director agreed. Scheduling defects come from missing roster data; the Recruitment Ops Manager will send the roster field mapping by Thursday. The background check integration is still undecided: the HRIT Lead said they need to align internally, and security has not scheduled its review. The TA Director wants an answer by the 20th because of winter peak. Hiring manager hub: Zurich confirmed as a pilot station; the TA Director will confirm the second station next week. Signal: the HRIT Lead did not commit to any date, and this is the third week the integration decision has slipped.';
 let srcMode='gong';
@@ -1229,7 +1229,7 @@ function logCall(offline){
 }
 function renderCallLog(){
   const C=S.calls||[];
-  const note=c=>c.source==='Gong recording'?'Recording held in Gong':c.source==='Customer transcript'?(c.deleted?'Customer-shared; raw transcript deleted after extraction':'Customer-shared; raw transcript retained'):'No recording; DSM-reported, not verbatim';
+  const note=c=>c.source==='Gong recording'?'Recording held in Gong':c.source==='Customer transcript'?(c.deleted?'Customer-shared; raw transcript deleted after extraction':'Customer-shared; raw transcript retained'):'No recording; DM-reported, not verbatim';
   $('callLog').innerHTML=C.length?C.slice(0,8).map(c=>`<div class='row' style='justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)'><span><strong>${esc(c.title)}</strong> <span class='small muted'>${fmt(c.date)}</span></span><span class='row' style='gap:8px'><span class='srcpill'>${esc(c.source)}</span><span class='small muted'>${note(c)}</span></span></div>`).join(''):`<p class='small muted' style='margin:0'>No calls processed yet. Every processed call is logged with how it was captured.</p>`;
 }
 $('callDate').value=iso(0);setMode('gong');renderCallLog();
@@ -1285,7 +1285,7 @@ function renderCurate(){
     <div style='margin:12px 0'>${stdRow('Hypercell progress, next steps and UAT notice',H.length+' hypercells')}${stdRow('Value against baseline',live.length+' live')}${stdRow('Customer health, delivery dimensions only',CW[custHealth()])}</div>
     <h3 style='margin:14px 0 6px;font-size:1.1rem'>Decisions needed from your team</h3>
     ${cd.length?cd.map(d=>`<div style='margin-bottom:10px'><label for='cv-${d.id}'>${d.id}, customer wording</label><textarea id='cv-${d.id}' data-k='cdec:${d.id}' style='min-height:64px'>${esc(txt('cdec:'+d.id,decDraft(d)))}</textarea></div>`).join(''):`<p class='small muted'>None open.</p>`}</div>`;
-  const right=`<div class='panel'><h3 style='margin-bottom:4px'>Shared by the DSM</h3><p class='small muted'>Internal only until you turn it on. Edit the wording before you publish.</p>
+  const right=`<div class='panel'><h3 style='margin-bottom:4px'>Shared by the DM</h3><p class='small muted'>Internal only until you turn it on. Edit the wording before you publish.</p>
     ${opts.map(o=>{const it=itm(o.k),id='tg-'+o.k.replace(':','-'),stale=it.shared&&it.at&&daysSince(it.at)>14;
       return `<div style='padding:10px 0;border-bottom:1px solid var(--line)'><div class='check' style='border:0;padding:0'><input type='checkbox' id='${id}' data-tg='${o.k}' ${it.shared?'checked':''}><label for='${id}' style='color:var(--ink);font-size:1rem;margin:0'><strong>${o.kind}</strong> ${it.shared?`<span class='small ok'>Visible to customer</span>`:`<span class='small muted'>Internal only</span>`}</label></div>
       ${it.shared&&!o.current?`<div class='incomplete'>No longer current. Consider unsharing.</div>`:''}${stale?`<div class='incomplete'>Shared over 14 days ago. Reconfirm by publishing, or unshare.</div>`:''}
@@ -1296,14 +1296,14 @@ function renderCurate(){
     <div style='margin-top:8px'><label for='cText'>Update in customer-ready words</label><textarea id='cText' style='min-height:70px'></textarea></div>
     <div class='row' style='margin-top:8px'><button class='btn' type='button' id='cAdd'>Add and share</button></div><div class='err' id='cErr'></div></div>`;
   const locked=`<div class='panel'><h3 style='margin-bottom:4px'>Never shared</h3><p class='small muted'>These have no share control, so they can’t reach the customer by accident.</p>${LOCKED.map(([n,d])=>`<div class='row' style='justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)'><span><strong>${n}</strong> <span class='small muted'>${d}</span></span><span class='small muted'>Locked</span></div>`).join('')}</div>`;
-  const log=`<div class='panel'><h3 style='margin-bottom:6px'>Publish log</h3>${sh.log.length?sh.log.slice(0,8).map(l=>`<div class='small' style='padding:3px 0'>${when(l.at)}: published by the DSM, ${l.n} shared item${l.n===1?'':'s'}</div>`).join(''):`<p class='small muted' style='margin:0'>Nothing published yet.</p>`}</div>`;
+  const log=`<div class='panel'><h3 style='margin-bottom:6px'>Publish log</h3>${sh.log.length?sh.log.slice(0,8).map(l=>`<div class='small' style='padding:3px 0'>${when(l.at)}: published by the DM, ${l.n} shared item${l.n===1?'':'s'}</div>`).join(''):`<p class='small muted' style='margin:0'>Nothing published yet.</p>`}</div>`;
   $('cvCurate').innerHTML=`<div class='grid2'>${left}${right}</div><div class='grid2'>${locked}${log}</div>`;
 }
 function renderPreview(){
   const s=snapshot();
   $('cvPreview').innerHTML=`<div class='guard'>Preview: this is what Swissport will see after you publish. Nothing internal is included.</div>
   <div class='panel' style='border-top:6px solid var(--accent)'><div class='row' style='justify-content:space-between;align-items:flex-start'><div><div class='muted small'>Deployment update, week of ${fmt(iso(0))}</div><h2 style='margin-top:4px'>Swissport and Phenom</h2></div><span class='pill ${s.health}'>${CW[s.health]}</span></div>
-    <p style='margin-top:12px'>${esc(s.summary)}</p><p class='small muted' style='margin:0'>Your Deployment Strategy Manager is your one point of contact: [DSM name].</p></div>
+    <p style='margin-top:12px'>${esc(s.summary)}</p><p class='small muted' style='margin:0'>Your Deployment Manager is your one point of contact: [DM name].</p></div>
   <h3 style='margin:18px 0 10px'>Where we are</h3>
   <div class='hcgrid'>${s.hcs.map(h=>{const i=STAGES.indexOf(h.stage);return `<div class='panel' style='margin:0'><h3>${esc(h.name)}</h3><div class='stages'>${STAGES.map((x,j)=>`<div class='stage ${j<i?'done':j===i?'now':''}'>${x}</div>`).join('')}</div><div class='small'>Next: ${esc(h.next)}</div>${i<=1?`<div class='small muted'>We’ll confirm the UAT window at least two weeks ahead.</div>`:''}</div>`}).join('')}</div>
   <h3 style='margin:18px 0 10px'>Decisions needed from your team</h3>
