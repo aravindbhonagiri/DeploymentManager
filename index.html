@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Deployment Health · Swissport pilot (prototype)</title>
+<title>Deployment Manager prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
@@ -166,19 +166,30 @@ select.lvl.High{color:var(--r)}select.lvl.Medium{color:var(--a)}select.lvl.Low{c
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-checked="true"]{background:var(--ink);color:var(--surface)}
 .srcpill{display:inline-block;font-size:.8rem;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
+.lockwrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.lockcard{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:10px;padding:28px;width:100%;max-width:420px}
 [hidden]{display:none!important}
 .toast{position:sticky;bottom:12px;margin-top:12px;background:var(--ink);color:var(--surface);padding:10px 14px;border-radius:6px;width:max-content;max-width:100%}
 @media (prefers-reduced-motion:no-preference){.verdict .word{transition:color .3s}}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="lockwrap" id="lock"><div class="lockcard">
+  <div class="acct" style="font-size:2rem">Deployment Manager prototype</div>
+  <p class="muted" style="margin:8px 0 18px">Enter the passcode to continue.</p>
+  <label for="passIn">Passcode</label>
+  <input type="password" id="passIn" autocomplete="current-password" style="background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 10px;width:100%">
+  <div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="passBtn">Unlock</button></div>
+  <div class="err" id="passErr" role="alert"></div>
+</div></div>
+<div class="wrap" id="appWrap" hidden>
   <header class="top">
     <div>
       <div class="acct">Swissport <span class="sample-tag">Sample data</span></div>
       <div class="acct-meta">Enterprise · <span id="hdrStage">Post-bootcamp deployment</span> · Deployment Management pilot prototype</div>
     </div>
     <div class="row">
+      <button class="btn small" id="lockBtn" type="button">Lock</button>
       <button class="btn small" id="resetBtn" type="button">Reset demo data</button>
     </div>
   </header>
@@ -1338,6 +1349,22 @@ $('cvCurate').addEventListener('click',e=>{
 $('pubBtn').addEventListener('click',()=>{const sh=shareState(),snap=snapshot();sh.published={json:JSON.stringify(snap),at:new Date().toISOString()};sh.log.unshift({at:sh.published.at,n:snap.shared.length});Object.values(sh.items).forEach(it=>{if(it.shared)it.at=iso(0)});save();renderCustomer();toast('Published. Swissport now sees this update.')});
 
 renderAll();route();
+
+/* ---------- Passcode gate ---------- */
+const PASS_HASH='0883b60dd795d4b0393eecd59c9e110c6555297d4f53a7c9b973ed0cb233c9f8';
+async function sha256(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function tryUnlock(){
+  const p=$('passIn').value.trim();
+  if(!p){$('passErr').textContent='Enter the passcode.';return}
+  let h='';try{h=await sha256(p)}catch(e){$('passErr').textContent='This browser can\u2019t check the passcode. Try a current version of Chrome, Edge, Safari or Firefox.';return}
+  if(h!==PASS_HASH){$('passErr').textContent='That passcode isn\u2019t right. It\u2019s case-sensitive.';$('passIn').select();return}
+  $('passIn').value='';$('lock').hidden=true;$('appWrap').hidden=false;renderAll();route();
+}
+$('passBtn').addEventListener('click',tryUnlock);
+$('passIn').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock()});
+$('passIn').addEventListener('input',()=>$('passErr').textContent='');
+$('lockBtn').addEventListener('click',()=>location.reload());
+$('passIn').focus();
 </script>
 </body>
 </html>
